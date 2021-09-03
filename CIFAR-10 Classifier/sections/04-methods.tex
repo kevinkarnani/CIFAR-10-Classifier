@@ -1,0 +1,82 @@
+\section{Methods}
+\label{sec:methods}
+
+\subsection{Artificial Neural Network}
+\label{sec:methods:Artificial Neural Network}
+
+An artificial neural network (ANN) attempts to simulate a network of neurons that make up the human brain so that a computer can learn things and make decisions similar to that of a human. Different layers of mathematical processing are used in artificial neural networks to understand the information that it is being fed. For the CIFAR-10 data set, we use an artificial neural network to classify images into one of ten different categories.
+The general architecture of an ANN is:
+$$\text{Input} \rightarrow \text{Fully-Connected} \rightarrow \text{Activation} \rightarrow \text{Fully-Connected} \rightarrow \text{Activation} \rightarrow \text{Output}$$
+The ANN architecture used for the CIFAR-10 dataset is:
+$$\text{Input} \rightarrow \text{Fully-Connected} \rightarrow \text{Sigmoid} \rightarrow \text{Fully-Connected} \rightarrow \text{Sigmoid} \rightarrow \text{LogLoss}$$
+The input layer receives the raw data which the ANN aims to learn about and standardizes the data so that one feature does not have more influence than another. Each observation is known as a node. From the input, the data is sent to a hidden layer. In the architecture above, the hidden layer is the first fully-connected layer and the first activation layer. The fully-connected layer takes input from the previous layer and uses its weighted sum to generate new outputs. It multiplies the input by a weight matrix and then adds a bias vector. An ANN learns the value of the weights and biases in the layers to best reach its goal. If we say that $w_{ij}$ is the weight going from node $i$ to node $j$, $b_j$ is the bias, $x_i$ is a node, and $D$ is the total number of nodes, then 
+$$h_j = \sum_{i=1}^{D}  = x_i w_ij + b_j$$ 
+or if all of the weights and biases are stored as matrices, then
+$$h = x^T W + b$$
+The activation layer is a layer in which an element-wise function is applied to produce a new output. The function that is being applied is known as an activation function. The activation function being used in the hidden layer is the sigmoid activation function. The sigmoid function keeps values in the range of (0, +1) and is given by 
+$$g(z) = \frac{1}{1+e^{-z}}$$
+The output of the hidden layer is sent to a fully-connected layer and the output of the fully-connected layer is sent to an objective function. For the CIFAR-10 dataset, the log loss objective function is used. This function is given by
+$$J = -(y\ln(\hat{y} + \epsilon) + (1-y)\ln(1-\hat{y} + \epsilon))$$
+Note: A small numeric stability constant, $\epsilon$ is added within the logs to avoid numeric instability (example: log 0 = -$\infty$).\\
+
+\noindent To minimize the weights, stochastic gradient descent was implemented. Stochastic gradient descent is an iterative method use to optimize an objective function. Backpropagation is used to calculate the gradient of the loss function with respect to all of the weights in the network. Since the objective function is at the output lauer, we start the gradient there and pass the gradient back to the sigmoid layer, then the fully-connected layer and so on until the input layer is reached. 
+The gradient of the log loss objective layer is
+$$\frac{\partial J}{\partial \hat{y}} = \frac{y-\hat{y}}{\hat{y}(1-\hat{y})+\epsilon}$$
+
+\noindent The gradient of the sigmoid activation layer is calculated as
+$$\frac{\partial g}{\partial z} = g(z) \circ (1-g(z))$$
+
+\noindent For the fully-connected layer, the gradient of its output needs to be calculated with respect to its input and the gradient of its output needs to be calculated with respect to its weights. 
+The gradient of the fully-connected layer's output with respect to its input is calculated as
+$$\frac{\partial g}{\partial h} = W^T$$
+The gradient of the fully-connected layer's output with respect to its weights is calculated as
+$$\frac{\partial g}{\partial W} = h^T$$
+
+\noindent ADAM (adaptive moments) is an adaptive learning rate optimation algorithm. We used ADAM to find the individial learning rates for each parameter.\\
+
+\noindent Given 
+\begin{itemize}
+    \item Decay rates $\rho_1=0.9$ and $\rho_2 = 0.999$ 
+    \item Global learning rate $\eta=0.01$
+    \item Small constant for numeric stability $\delta=10^{-8}$
+    \item Accumulators $s=0$ and $r=0$
+    \item Gradient g
+\end{itemize}
+The momentum is calculated as
+$$s=\rho_{1}s + (1-\rho_{1})g$$
+The RMSProp term is calculated as:
+$$r=\rho_{2}s + (1-\rho_{2})(g\circ g)$$
+Blending the above two terms gives
+$$\frac{s}{\sqrt{r}+\delta}$$
+Allowing each term to drop off according to its own weight over time $t$ is given by
+$$\frac{\frac{s}{1-(\rho_{1})^t}}{\sqrt{\frac{r}{1-(\rho_{2})^t}}+\delta}$$
+The weights in the fully-connected layer are updated as
+$$w_j = w_j + \eta\frac{\frac{s}{1-(\rho_{1})^t}}{\sqrt{\frac{r}{1-(\rho_{2})^t}}+\delta}$$
+The biases in the fully connected layer are updated as
+$$b_j = b_j + \eta\frac{\frac{s}{1-(\rho_{1})^t}}{\sqrt{\frac{r}{1-(\rho_{2})^t}}+\delta}$$
+
+\subsection{Multilayer Perceptron}
+\label{sec:methods:Multilayer Perceptron}
+
+The MultiLayer Perceptron (MLPs) is an extension on top of the ANNs from the previous section. Typically an MLP consists of more Hidden Layers aside from the initial Input Layer and the final Objective Function. In most cases, there are multiple Fully Connected Layers that each store the weights and biases for that layer's perceptron.\\
+
+\noindent MLPs are extremely useful in classification problems because they use various techniques that would normally make classification impossible for non-linearly separable datasets. MLPs break through this restriction by using multiple complex algorithms and architectures to do proper regression. So what the MLP does after it reaches the first Hidden Layer, is that the calculated output gets pushed through an Activation function, like a ReLu or a Sigmoid. After this is calculated, the output is then pushed to the next hidden layer, by using the dot product on that output with calculated weights. After repeating the forward propagation steps a few times, the MLP will reach the Output Layer, at which point it is time to begin Backpropagation using the same method as described above in the section on ANNs.
+\subsection{Convolutional Neural Network}
+\label{sec:methods:Convolutional Neural Network}
+
+A Convolutional Neural Network (ConvNet/CNN) is an algorithm which operates by convolving over an image using randomized filters, updating through the learning process to classify images. Sometimes these filters are hand-engineered, but with enough training, CNNs have the ability to learn these filters/characteristics. The architecture of a CNN is analogous to that of the connectivity pattern of Neurons in the Human Brain and was inspired by the organization of the Visual Cortex, which is why the pre-processing required in a CNN is much lower as compared to other classification algorithms. \cite{hussain_2020}\\
+
+\noindent Theoretically, a CNN is supposed to successfully capture the Spatial and Temporal dependencies in an image due to the use of convolutions. The architecture performs a better fitting to the image dataset due to the reduction in the number of parameters involved and reusability of weights. In other words, the network can be trained to understand the sophistication of the image better. \cite{hussain_2020}\\
+
+\noindent A CNN differs slightly from other discriminative algorithms (Logistic Regression, ANN, MLP) in that it makes use of the Convolutional and Pooling Layers. The objective of the Convolutional Layer is to extract the high-level features such as edges, from the input image. Conventionally, the first ConvLayer is responsible for capturing the Low-Level features such as edges, color, gradient orientation, etc. The more layers we add, the higher the level of abstraction in terms of feature detection/abstraction. \cite{hussain_2020}\\
+
+\noindent The Pooling layer, however, is responsible for reducing the spatial size of the Feature detected by the ConvLayer, making use of the dimensionality reduction to decrease computational complexity. A MaxPool will look for the brightest pixels, thus helping when we are dealing with binarized images. The converse phenomena occurs when we use a MinPool, as in, we focus on the darkest pixels. For our purposes, we decided to use a AvgPool, as this averages out the intensity of the pixel, giving us a smoothing effect over the extracted feature. After going through this process, all that is left is to flatten the final output and feed it to a regular Neural Network for classification purposes. For the sake of simplicity, the LeNet5 architecture was used:\\
+
+\noindent Input $\rightarrow$ Conv $\rightarrow$ ReLU $\rightarrow$ Pool $\rightarrow$ Conv $\rightarrow$ ReLU $\rightarrow$ Pool $\rightarrow$ FCL $\rightarrow$ FCL $\rightarrow$ FCL\\
+$\rightarrow$ Softmax $\rightarrow$ Cross Entropy \cite{analytics_vidhya_2021}
+
+\subsection{Generative Adversarial Network}
+\label{sec:methods:Generative Adversarial Network}
+\noindent A Generative Adversarial Network is an algorithm that consists of 2 parts, a generator and discriminator. The generator works against the discriminator and they are trained simultaneously. The generator generates a fake image and the discriminator's job is to identify the fake images from the real images from the training set. The important thing to keep in mind when implementing the GAN is to tell the objective function that the first half of the data coming in is the real data, and the rest is the fake data. From there it will evaluate the discriminator's ability to do as its namesake, and to discriminate. Using this we will update the Fully Connected Layer's weights within the Discriminator portion of the architecture using gradient descent. Once the discriminator's weights have been updated, we will generate new fake data and pass it through the architecture, but this time without adding the real data. Evaluating only the fake data, the GAN will do gradient descent updating the weights of all Fully Connected Layers of the Generator, until it reaches the last layer to back propagate through. \\
+
+\noindent However, in order to adapt this algorithm to supervised learning, a few modifications had to be made. First, the discriminator is modified and a Fully Connected layer is added at the front which feeds into the TanH activation layer. At this point, a fork occurs and this data is fed into 2 separate models: one, a normal discriminator architecture and the other is a Fully Connected layer with a Softmax activation layer, acting as a classifier \cite{brownlee_2020}. This results in the classifier being trained alongside the discriminator. Usually we would discard the discriminator and use generators but in this case the discriminator and classifier are preserved. In essence what we have end up with is a Multi Layer perceptron that has been trained using the generative algorithm. 

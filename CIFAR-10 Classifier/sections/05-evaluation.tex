@@ -1,0 +1,89 @@
+\section{Evaluation}
+\label{sec:evaluation}
+
+\subsection{Artificial Neural Network}
+\label{sec:evaluation:Artificial Neural Network}
+ For multiple runs of the artificial neural network (ANN) model, the model produced accuracies that were very similar. Therefore, results from one run is included in Table 1. This table shows the accuracy for the training set and the validation set.
+ 
+ \begin{table}[ht] 
+    \centering
+    \begin{tabular}{|l|l|l|l|l|}
+        \hline
+        \textbf{Dataset Type} & \textbf{Accuracy}\\
+        \hline
+        \textbf{Training Set} & 68.194\%\\
+        \textbf{Test Set} & 38.48\%\\
+        \hline
+    \end{tabular}
+    \caption{ANN Metrics}
+    \label{tab:Table1}
+\end{table}
+
+\noindent We got the highest accuracies with a learning rate of 0.01. The number of iterations for the gradient descent is 2,000. The model took 54 minutes and 56 seconds to train.
+
+\subsection{MultiLayer Perceptron}
+\label{sec:evaluation:MultiLayer Perceptron}
+For the Multilayer Perceptron, a learning rate of 0.001 for 4,000 epochs gave the highest accuracy. The model took 2 hours, 14 minutes, and 44 seconds to train. The MLP model had a better accuracy for the training set compared to the ANN model. However, the ANN model had a better accuracy for the test set. We attempted to implement regularization techniques like using a Dropoff Layer and the L2 regularization technique, but our experimentation showed no favorable improvement.
+
+\begin{table}[ht] 
+    \centering
+    \begin{tabular}{|l|l|l|l|l|}
+        \hline
+        \textbf{Dataset Type} & \textbf{Accuracy}\\
+        \hline
+        \textbf{Training Set} & 76.934\%\\
+        \textbf{Test Set} & 35.96\%\\
+        \hline
+    \end{tabular}
+    \caption{MLP Metrics}
+    \label{tab:Table3}
+\end{table}
+
+\subsection{Convolutional Neural Network}
+\label{sec:evaluation:Convolutional Neural Network}
+
+Initially, a big issue was that to get the CNN to run on the entire dataset using only a NumPy implementation was the sheer computational complexity. For one epoch, it initially took around 12-16 hours, which is unfeasible. To counter this, research was conducted with regards to how CNNs work under the hood in most Deep Learning APIs and libraries. It turns out most implementations take advantage of a function found in MATLAB called \verb|im2col|, which takes an image and reconstructs each block in the image into a column vector. This is used to ease the computational complexity that occurs when performing convolutions and applying filters in the Convolutional Layer, as a naive implementation of a convolution function is $O(n^2)$. In fact, since $\sim$90\% of both the GPU and CPU usage of the AlexNet occurs in the ConvLayer, it is sensible to see why the naive implementation of a CNN would take so long. With the implementation of this, however, it took 2-4 minutes to learn the entire training set of 50,000 images, and around 2-10 seconds to validate the learned model against the testing set of 10,000 images. \\
+
+\noindent Various techniques were implemented to see what would affect the CNN's output. Xavier Initialization was added to each FCL and ConvLayer in order to help us achieve our global minima faster. Additionally, a simple gradient descent algorithm was used, then the ADAM optimization algorithm was used, and the a validation set was used in order to check against overfitting. The results using stochastic gradient descent over 20 epochs over the entire dataset are shown in the table below:
+
+\begin{table}[ht] 
+    \centering
+    \begin{tabular}{|l|l|l|l|l|}
+        \hline
+        \textbf{Dataset Type} & \textbf{Accuracy} & \textbf{ADAM}\\
+        \hline
+        \textbf{Training Set} & 68.9\% & No\\
+        \textbf{Training Set} & 74.5\% & Yes\\
+        \textbf{Test Set} & 52.3\% & No\\
+        \textbf{Test Set} & 52.6\% & Yes\\
+        \hline
+    \end{tabular}
+    \caption{CNN Metrics w/o Validation}
+    \label{tab:Table3}
+\end{table}
+
+\begin{table}[ht] 
+    \centering
+    \begin{tabular}{|l|l|l|l|l|}
+        \hline
+        \textbf{Dataset Type} & \textbf{Accuracy} & \textbf{ADAM}\\
+        \hline
+        \textbf{Training Set} & 64.5\% & No\\
+        \textbf{Training Set} & 66.7\% & Yes\\
+        \textbf{Validation Set} & 65.1\% & No\\
+        \textbf{Validation Set} & 66.9\% & Yes\\
+        \textbf{Test Set} & 55.1\% & No\\
+        \textbf{Test Set} & 48.6\% & Yes\\
+        \hline
+    \end{tabular}
+    \caption{CNN Metrics w/ Validation}
+    \label{tab:Table3}
+\end{table}
+
+\newpage
+\noindent As shown above, adding a validation set seemed to worsen the issue of overfitting, and even reduced the accuracy on the training set itself. Batch gradient descent was attempted using a batch size of 100, which resulted in similar results across the board. While it did take slightly less time (around 5 minutes less over 20 epochs), it did have worse results by a few percent. One note to point out is that the original LeNet5 suggests the use of the \verb|tanh| function, but due to the results being far worse than expected, a switch was made to the \verb|ReLU|. Lastly, $\eta = 0.0001$ for the ADAM results, and $\eta = 0.005$ for the non-ADAM results.
+
+\subsection{Generative Adversarial Network}
+\label{sec:evaluation:Generative Adversarial Network}
+
+The first issue that we encountered was in adapting previously written GAN code to the SGAN architecture by adding the classification components. The resulting architecture used batch gradient descent and with a batch size of 100, the estimated time for one epoch was 30 minutes, resulting in 15 hours for 30 epochs. Having ran it once with undesirable results, training on the whole dataset was deemed unfeasible. Instead, we pivoted to training with the whole dataset in mini batches to simulate one epoch. Initially, the model had 8 percent training accuracy and 10 percent testing accuracy, which was undesirable. Experimenting with the learning rate and the number epochs yielded a 20 percent training accuracy and 13 percent testing accuracy. 

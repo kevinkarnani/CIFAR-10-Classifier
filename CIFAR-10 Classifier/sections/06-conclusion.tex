@@ -1,0 +1,24 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+\subsection{Overall Analysis}
+\label{sec:conclusion: Overall Analysis}
+
+The ANN and MLP models took 1-2 hours to run. We decided to combine all of the batches to push through all of the data through the architecture at one time. This increased the time the model took during training.\\ 
+
+\noindent The CNN did worse than we thought it would in terms of accuracy, but ran much faster due to an optimization from the use of \verb|im2col|. The use of a validation set as well as switching between batch and stochastic gradient descents seemed to have little to no effect on the yielded metrics. Overall, $\sim$60\% training and $\sim$50\% testing accuracies are rather undesirable, especially since it took an hour to run, but it seems to be on par with the results found with what occurs when using Deep Learning libraries. \cite{yang_2019}\\
+
+\noindent While researching semi-supervised GANs, we found that this model has a lot of potential and can be used for classifying partially labeled data. However, due to the library restrictions, scope of the project, and time constraints, building an optimized model was not possible and hence limited our approach. Given more time and optimization tools, this approach can prove to be as good as CNNs.\\
+
+\noindent One last thing to point out is that the CIFAR-10 dataset is much harder to deal with than MNIST, as it has 3 color channels and the images are slightly bigger. This is clear since even with non CNN DL algorithms, we were getting 90+\% accuracy. Even after conducting research, it seems that most implementations using Keras, PyTorch, or TensorFlow using the same architectures give similar results.\\
+
+\subsection{Future Work}
+\label{sec:conclusion: Future Work}
+
+The ANN and MLP models resulted in overfitting. To counter this, we added code for a dropout layer. However, when testing the models we saw that the dropout layer decreased the accuracy of the models to around 10\%. Future work for these two models would include adding better regularization algorithms to counter the overfitting and figure out what other alternatives there are to deal with this issue.\\
+
+\noindent In terms of the CNN, perhaps a better model could have been used. The LeNet5 is outdated, and while it works well with the MNIST dataset, this is due to MNIST images only being black and white. With respect to colored datasets like CIFAR-10 and CIFAR-100, it is not logical to use this architecture as it is far too simple.\\
+
+\noindent In order to improve the performance of the Generative Adversarial Network, various approaches can be adopted. Mainly, instead of using Fully Connected layer for feature extraction, using convolution layer can yield better results. Moreover, there are other approaches to supervised GANs that can be explored. For example, separate discriminator models with shared weights and stacked discriminator models with shared weights are two different approaches that can be explored.\\ 
+
+\noindent Along with the above improvements, optimizing the source code by using GPU processing will speed up time taken to learn by a lot and thus shorten the time taken for debugging. 
