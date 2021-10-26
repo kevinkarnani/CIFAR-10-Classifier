@@ -45,3 +45,13 @@ Else, individually install these libraries using `pip install`.
 
 Given the `.idea` folder, the project can be set up in PyCharm Professional. However, using other IDEs such as Jupyter
 Notebook or JupyterLab will also suffice.
+
+## Authors
+
+- Kevin Karnani
+
+- Saadiya Allahbaksh
+
+- Ritik Ghanshani
+
+- Anthony Goncharenko
